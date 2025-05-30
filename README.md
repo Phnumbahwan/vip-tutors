@@ -1,7 +1,5 @@
 # VIP Tutors API
 
-## Environment Setup
-
 ## 🛠️ Setup Instructions For Backend
 
 ### 1️⃣ Copy `.env` File
