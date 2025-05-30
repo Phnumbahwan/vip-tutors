@@ -19,5 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withSchedule(function (Schedule $schedule) {
+        //	Run the task every day at midnight.
         $schedule->command('tasks:cleanup-old')->daily();
     })->create();

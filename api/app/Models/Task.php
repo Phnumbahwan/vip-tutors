@@ -45,4 +45,9 @@ class Task extends Model
     {
         return $query->where('priority', $priority);
     }
+
+    public function scopeBelongsToUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
 }

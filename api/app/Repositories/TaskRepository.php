@@ -42,10 +42,24 @@ class TaskRepository implements TaskRepositoryInterface
         return $task->delete();
     }
 
-    public function reorder(array $orderData) {
+    public function reorder(array $taskIds) {
         Cache::forget('tasks');
-        foreach ($orderData as $order => $id) {
-            Task::where('id', $id)->update(['order' => $order]);
+        
+        // Verify all tasks belong to the current user
+        $userTasks = Task::whereIn('id', $taskIds)
+            ->belongsToUser(Auth::id())
+            ->get();
+
+        if ($userTasks->count() !== count($taskIds)) {
+            throw new \InvalidArgumentException('Some tasks do not belong to the current user');
         }
+
+        // Update order for each task
+        foreach ($taskIds as $index => $taskId) {
+            Task::where('id', $taskId)
+                ->update(['order' => $index + 1]);
+        }
+
+        return true;
     }
 }

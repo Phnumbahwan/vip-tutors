@@ -6,20 +6,31 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
+ */
 class TaskFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
     protected $model = Task::class;
 
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
-            'id' => (string) \Illuminate\Support\Str::uuid(),
-            'title' => $this->faker->sentence(),
-            'description' => $this->faker->paragraph(),
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
             'status' => $this->faker->randomElement(['pending', 'completed']),
-            'priority' => $this->faker->randomElement(['low', 'medium', 'high']),
-            'order' => $this->faker->numberBetween(0, 100),
             'user_id' => User::factory(),
+            'order' => 0,
         ];
     }
 } 

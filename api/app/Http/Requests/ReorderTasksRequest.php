@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ReorderTasksRequest extends FormRequest
 {
@@ -22,8 +23,18 @@ class ReorderTasksRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order' => 'required|array',
-            'order.*' => 'string|exists:tasks,id',
+            'taskIds' => ['required', 'array', 'min:1'],
+            'taskIds.*' => [
+                'required',
+                'string',
+                'exists:tasks,id',
+                function ($attribute, $value, $fail) {
+                    $task = \App\Models\Task::find($value);
+                    if (!$task || $task->user_id !== Auth::id()) {
+                        $fail('The task does not belong to you.');
+                    }
+                },
+            ],
         ];
     }
 }

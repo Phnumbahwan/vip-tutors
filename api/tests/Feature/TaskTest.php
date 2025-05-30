@@ -130,7 +130,7 @@ it('reorders tasks successfully using UUIDs', function () {
     $newOrder = $tasks->pluck('id')->shuffle()->values()->toArray();
 
     $response = $this->postJson('/api/tasks/reorder', [
-        'order' => $newOrder,
+        'taskIds' => $newOrder,
     ]);
 
     $response->assertStatus(200)
@@ -139,7 +139,7 @@ it('reorders tasks successfully using UUIDs', function () {
     foreach ($newOrder as $position => $uuid) {
         $this->assertDatabaseHas('tasks', [
             'id' => $uuid,
-            'order' => $position,
+            'order' => $position + 1,
             'user_id' => $user->id,
         ]);
     }
