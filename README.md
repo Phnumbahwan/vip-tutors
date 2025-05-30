@@ -135,6 +135,10 @@ API documentation is available at `/api/documentation` when running the applicat
 php artisan l5-swagger:generate
 ```
 
+### You can use Postman. Here's the look from it.
+![image](https://github.com/user-attachments/assets/01998e74-51bd-4718-83f9-67b5e8c9d6ee)
+
+
 ## Development
 
 ### Code Style
