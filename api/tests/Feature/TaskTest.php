@@ -119,6 +119,32 @@ it('deletes a task successfully', function () {
     ]);
 });
 
+it('reorders tasks successfully using UUIDs', function () {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $tasks = Task::factory()->count(3)->create([
+        'user_id' => $user->id,
+    ]);
+
+    $newOrder = $tasks->pluck('id')->shuffle()->values()->toArray();
+
+    $response = $this->postJson('/api/tasks/reorder', [
+        'order' => $newOrder,
+    ]);
+
+    $response->assertStatus(200)
+             ->assertJson(['success' => true]);
+
+    foreach ($newOrder as $position => $uuid) {
+        $this->assertDatabaseHas('tasks', [
+            'id' => $uuid,
+            'order' => $position,
+            'user_id' => $user->id,
+        ]);
+    }
+});
+
 it('prevents unauthenticated task creation', function () {
     $response = $this->postJson('/api/tasks', [
         'title' => 'Unauthorized Task',
