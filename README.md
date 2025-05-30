@@ -111,14 +111,15 @@ This API follows a layered architecture pattern:
 - Example: `TaskReorderTest` for task reordering functionality
 
 ### Unit Tests
-- Located in `tests/Unit/`
+- Uses Pest for unit testing
+- Located in `tests/Feature/`
 - Tests individual components in isolation
 - Mocks dependencies using Laravel's testing tools
 
 ### Running Tests
 ```bash
 # Run all tests
-php artisan test
+php artisan test or ./vendor/bin/pest
 
 # Run specific test file
 php artisan test tests/Feature/TaskReorderTest.php
