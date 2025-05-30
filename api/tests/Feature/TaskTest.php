@@ -6,12 +6,14 @@ use Laravel\Sanctum\Sanctum;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    Sanctum::actingAs($this->user);
 });
 
 test('user can list their tasks', function () {
+    $user = $this->user;
+    Sanctum::actingAs($user);
+
     Task::factory()->count(3)->create([
-        'user_id' => $this->user->id
+        'user_id' => $user->id
     ]);
 
     $response = $this->getJson('/api/tasks');
@@ -31,6 +33,34 @@ test('user can list their tasks', function () {
                 'updated_at'
             ]
         ]);
+});
+
+it('creates a task successfully', function () {
+    $user = $user = $this->user;
+
+    Sanctum::actingAs($user);
+
+    $payload = [
+        'title' => 'New Task',
+        'description' => 'Description here',
+        'status' => 'pending',
+        'priority' => 'medium',
+        'order' => 1,
+    ];
+
+    $response = $this->postJson('/api/tasks', $payload);
+
+    $response->assertStatus(200)
+             ->assertJsonFragment([
+                 'title' => 'New Task',
+                 'status' => 'pending',
+                 'priority' => 'medium',
+             ]);
+
+    $this->assertDatabaseHas('tasks', [
+        'title' => 'New Task',
+        'user_id' => $user->id,
+    ]);
 });
 
 it('updates a task successfully', function () {
@@ -71,4 +101,31 @@ it('updates a task successfully', function () {
         'order' => 2,
         'user_id' => $user->id,
     ]);
+});
+
+it('deletes a task successfully', function () {
+    $user = $this->user;
+    Sanctum::actingAs($user);
+
+    $task = Task::factory()->create(['user_id' => $user->id]);
+
+    $response = $this->deleteJson("/api/tasks/{$task->id}");
+
+    $response->assertStatus(200)
+             ->assertJson(['success' => true]);
+
+    $this->assertDatabaseMissing('tasks', [
+        'id' => $task->id,
+    ]);
+});
+
+it('prevents unauthenticated task creation', function () {
+    $response = $this->postJson('/api/tasks', [
+        'title' => 'Unauthorized Task',
+        'status' => 'pending',
+        'priority' => 'low',
+        'order' => 1,
+    ]);
+
+    $response->assertStatus(401);
 });
