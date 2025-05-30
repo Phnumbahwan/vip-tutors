@@ -32,3 +32,43 @@ test('user can list their tasks', function () {
             ]
         ]);
 });
+
+it('updates a task successfully', function () {
+    $user = $this->user;
+
+    Sanctum::actingAs($user);
+
+    $task = Task::factory()->create([
+        'user_id' => $user->id,
+        'title' => 'Old Title',
+    ]);
+
+    $payload = [
+        'title' => 'Updated Title',
+        'description' => 'Updated description',
+        'status' => 'completed',
+        'priority' => 'high',
+        'order' => 2,
+    ];
+
+    $response = $this->putJson("/api/tasks/{$task->id}", $payload);
+
+    $response->assertOk()
+        ->assertJsonFragment([
+            'title' => 'Updated Title',
+            'description' => 'Updated description',
+            'status' => 'completed',
+            'priority' => 'high',
+            'order' => 2,
+        ]);
+
+    $this->assertDatabaseHas('tasks', [
+        'id' => $task->id,
+        'title' => 'Updated Title',
+        'description' => 'Updated description',
+        'status' => 'completed',
+        'priority' => 'high',
+        'order' => 2,
+        'user_id' => $user->id,
+    ]);
+});

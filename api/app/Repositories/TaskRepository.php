@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class TaskRepository implements TaskRepositoryInterface
 {
     public function all() {
-        return Cache::remember('tasks', 60, fn() => Task::all());
+        return Cache::remember('tasks', 60, fn() => Task::orderBy('order')->get());
     }
 
     public function find($id) {
@@ -21,6 +21,11 @@ class TaskRepository implements TaskRepositoryInterface
         Cache::forget('tasks');
 
         $data['user_id'] = Auth::id();
+
+        $lastOrder = Task::where('user_id', Auth::id())
+            ->max('order');
+        $data['order'] = $lastOrder ? $lastOrder + 1 : 1;
+
         return Task::create($data);
     }
 
