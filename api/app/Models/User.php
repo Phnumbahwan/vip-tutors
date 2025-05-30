@@ -61,4 +61,9 @@ class User extends Authenticatable
             $user->id = (string) Str::uuid();
         });
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'user_id');
+    }
 }
