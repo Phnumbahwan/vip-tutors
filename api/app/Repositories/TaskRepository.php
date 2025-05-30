@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Task;
 use App\Repositories\Interfaces\TaskRepositoryInterface;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 
 class TaskRepository implements TaskRepositoryInterface
 {
@@ -18,6 +19,8 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function create(array $data) {
         Cache::forget('tasks');
+
+        $data['user_id'] = Auth::id();
         return Task::create($data);
     }
 
