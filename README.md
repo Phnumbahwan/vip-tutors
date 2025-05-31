@@ -156,3 +156,7 @@ php artisan l5-swagger:generate
 - Uses Laravel Sanctum for API authentication
 - Implements JWT tokens for secure communication
 - All endpoints require authentication unless specified otherwise
+
+## 🛠️ Setup Instructions For Frontend
+1. npm install
+2. npm run dev
